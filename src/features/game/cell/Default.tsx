@@ -10,13 +10,22 @@ export const Cell:FC<ICellProps> = ({ x, y, toggleCellState, className }) => {
 }
 
 export const CellStyled = styled(Cell)`
-    border: 1px solid;
-    width: 10px;
-    height: 10px;
-    ${ props =>  props.state && 'background-color: green' }
+    ${ props =>  `
+        ${props.state
+            ? 'background-color: green'
+            : `
+                background-color: white;
+                &:hover {
+                    background-color: grey;
+                }
+            `};
+        width: ${props.size}px;
+        height: ${props.size}px;
+    ` }
 `;
 CellStyled.defaultProps = {
-    state: false
+    state: false,
+    size: 10
 };
 
-export default memo(CellStyled);
+export default memo<typeof Cell>(CellStyled);

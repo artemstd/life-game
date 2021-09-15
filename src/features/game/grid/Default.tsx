@@ -2,28 +2,38 @@ import { FC, lazy, memo, Suspense } from "react";
 import styled from "styled-components";
 import { IGridProps } from "./types";
 
+// компонент ячейки по умолчанию
 const CellDefault = lazy(() => import('../cell/Default'));
 
 export const Grid:FC<IGridProps> = ({ cellsMap, toggleCellState, className, CellComponent }) => {
+    // если компонент ячейки не передан, подгружаем по умолчанию компонент
     const Cell = CellComponent || CellDefault;
-    const cells = cellsMap.map(
-        (row, x) => row.map(
-            (state, y) => <Cell key={ `${x}_${y}` } x={ x } y={ y } toggleCellState={ toggleCellState } state={ state } />
-        )
-    );
+    const cells = []; 
+    let x, y;
+    for (x = 0; x < cellsMap.length; x++) {
+        for (y = 0; y < cellsMap[x].length; y++) {
+            cells.push(
+                <Cell key={ `${x}_${y}` } x={ x } y={ y } toggleCellState={ toggleCellState } state={ cellsMap[x][y] } />
+            );
+        }    
+    }
 
-    return <div className={ className }>
-        <Suspense fallback>
+    return  <Suspense fallback>
+        <div className={ className }>
             { cells }
-        </Suspense>
-    </div>;
+        </div>
+    </Suspense>;
 }
 
 export const GridStyled = styled(Grid)`
     display: grid;
-    grid-template-columns: repeat(${props => props.cellsMap[0].length}, max-content);
-    grid-template-rows: repeat(${props => props.cellsMap.length}, max-content);
+    ${props => `
+        grid-template-columns: repeat(${props.cellsMap[0]?.length || 0}, max-content);
+        grid-template-rows: repeat(${props.cellsMap.length}, max-content);
+    `}
     grid-gap: 1px;
+    border: 1px solid black;
+    background-color: black;
 `;
 
-export default memo(GridStyled);
+export default memo<typeof Grid>(GridStyled);

@@ -1,18 +1,31 @@
-import Game from './features/game/Default';
-import Grid from './features/game/grid/Default';
-import Button from "./common/button";
-import Input from "./common/input";
+import { FC } from 'react';
+import {
+    BrowserRouter,
+    Switch,
+    Route,
+    Redirect
+} from 'react-router-dom';
+import styled from 'styled-components';
+import Heading from './common/typography/Heading';
+import IndexPage from './pages';
+import { IAppProps } from './types';
 
-const App = () => {
-    return <Game render={
-        ({ isRunning, setIsRunning, isClosed, setIsClosed, size, setSize, cellsMap, toggleCellState }) => 
-        <>
-            <Button styleType={ isRunning ? "cancel" : "primary" } onClick={ () => setIsRunning(prevValue => !prevValue) }>{ isRunning ? "Stop" : "Start" }</Button>
-            <Button onClick={ () => setIsClosed(prevValue => !prevValue) }>{ isClosed ? "Switch to limit grid" : "Switch to closed grid" }</Button>
-            <Input type="number" value={ size } onChange={ (e) => setSize(parseInt(e.target.value)) } />
-            <Grid cellsMap={ cellsMap } toggleCellState={ toggleCellState } />
-        </>
-    } />;
+const App:FC<IAppProps> = ({ className }) => {
+    return <div className={ className }>
+        <BrowserRouter>
+            <Heading size={1}>Conway's Game of Life</Heading>
+            <Switch>
+                <Route exact path="/" render={ IndexPage } />
+                <Redirect to="/" />
+            </Switch>
+        </BrowserRouter>
+    </div>
 };
 
-export default App;
+const AppStyled = styled(App)`
+    h1 {
+        text-align: center;
+    }
+`;
+
+export default AppStyled;
